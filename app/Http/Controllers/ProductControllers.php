@@ -14,9 +14,7 @@ class ProductControllers extends Controller
     {
         $product = Product::all();
         // return response()->json(['message'=>"get all product",'data' => $product], 200);
-        // return ProductResource::collection($product);
-
-      
+        return ProductResource::collection($product);
     }
 
     public function show($id){

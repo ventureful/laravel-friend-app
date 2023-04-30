@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductControllers;
+use App\Http\Controllers\AuthenticationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,5 +18,9 @@ use App\Http\Controllers\ProductControllers;
 
 
 
-Route::get('/product', [ProductControllers::class, 'index']);
+Route::get('/product', [ProductControllers::class, 'index'])->middleware(['auth:sanctum']);
 Route::get('/product/{id}', [ProductControllers::class, 'show']);
+
+Route::post('/login',[AuthenticationController::class, 'login']);
+Route::post('/signup',[AuthenticationController::class, 'signup']);
+Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware(['auth:sanctum']);
