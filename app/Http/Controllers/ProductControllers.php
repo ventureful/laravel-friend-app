@@ -14,21 +14,17 @@ class ProductControllers extends Controller
     public function index()
     {
         $product = Product::all();
-        // return response()->json(['message'=>"get all product",'data' => $product], 200);
         return ProductDetailResource::collection($product->loadMissing('user:id,username'));
     }
 
     public function show($id){
-        // $product = Product::with('user:id,username')->findOrFail($id);
-        // return response()->json(['data' => $product], 200,);
-        // return new ProductDetailResource($product);
             try {
                 $product = Product::with('user:id,username')->findOrFail($id);
                 return new ProductDetailResource($product);
             } catch (ModelNotFoundException $exception) {
                 return response()->json([
                             'status' => 404, 
-                            'data' => 'data not found'
+                            'error' => $exception->getMessage()
                         ], 404);
             }
         
@@ -41,13 +37,12 @@ class ProductControllers extends Controller
             'price' => 'required'
         ]);
 
-        // dd(Auth::user()->id);
-        $request['creator'] = Auth::user()->id; //Memasukan column author yang terlogin
+        // dd($validated->fails());
+    
+            // $request['creator'] = Auth::user()->id; //Memasukan column author yang terlogin
+            // $product = Product::create($request->all());
+            // return new ProductDetailResource($product->loadMissing('user:id,username'));
         
-        $product = Product::create($request->all());
-
-
-        return new ProductDetailResource($product->loadMissing('user:id,username'));
     }
 
     public function update(Request $request, $id){
@@ -56,16 +51,25 @@ class ProductControllers extends Controller
             'description' => 'required',
             'price' => 'required'
         ]);
-        $product = Product::findOrFail($id);
 
-        $updated = $product->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'price' => $validated['price']
-        ]);
+        try {
+            $product = Product::findOrFail($id);
+    
+            $updated = $product->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'price' => $validated['price']
+            ]);
+    
+            $res = ['message' => "sucess updated"];
 
-        $res = ['message' => "sucess updated"];
-        return response()->json($res, 200);
+            return response()->json($res, 200);
+        }  catch (ModelNotFoundException $exception) {
+            return response()->json([
+                        'status' => 404, 
+                        'error' => $exception->getMessage()
+                    ], 404);
+        }
        }
     
        public function destroy(Request $request, $id){
