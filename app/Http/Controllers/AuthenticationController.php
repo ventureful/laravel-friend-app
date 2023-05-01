@@ -12,29 +12,23 @@ class AuthenticationController extends Controller
 {
     public function signup(Request $request)
     {
-        $data = $request->validate([
-            'username' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
+        $validated = $request->validate([
+            'username' => 'required',
+            'email' => 'required',
+            'password' => 'required'
         ]);
 
+        // if ($validated->fails()) { 
+        //     return response()->json(['error'=>$validated->errors()], 400);   
+        // }
 
-        $user = User::create([
-            'username' => $data['username'],
-            'email'=>$data['email'],
-            'password'=>$data['password']
-        ]);
+        // dd($validated);
+        // $user = User::create($request->all());
 
-        $token =  $user->createToken($request->email)->plainTextToken;
+        // return response()->json(['user' => $user], 201);
 
-        $res = [
-            'user' => $user,
-            'token' => $token
-        ];
-
-        return response()->json($res, 201);
     }
-    
+
     public function login(Request $request)
     {
         $request->validate([

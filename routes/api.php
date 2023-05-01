@@ -16,11 +16,18 @@ use App\Http\Controllers\AuthenticationController;
 |
 */
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/logout', [AuthenticationController::class, 'logout']);
+    
+    Route::post('/product', [ProductControllers::class, 'store']);
+    Route::patch('/product/{id}', [ProductControllers::class, 'update'])->middleware('creatorproduct');
+    Route::delete('/product/{id}', [ProductControllers::class, 'destroy'])->middleware('creatorproduct');
 
+});
 
-Route::get('/product', [ProductControllers::class, 'index'])->middleware(['auth:sanctum']);
+Route::get('/product', [ProductControllers::class, 'index']);
 Route::get('/product/{id}', [ProductControllers::class, 'show']);
 
 Route::post('/login',[AuthenticationController::class, 'login']);
 Route::post('/signup',[AuthenticationController::class, 'signup']);
-Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware(['auth:sanctum']);
+// Route::get('/logout', [AuthenticationController::class, 'logout'])->middleware(['auth:sanctum']);
